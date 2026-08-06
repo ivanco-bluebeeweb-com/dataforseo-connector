@@ -262,7 +262,8 @@ async def create_project(ctx, params: CreateProjectParams) -> ActionResult:
     }
     await ctx.store.create("dfs_projects", doc)
     return ActionResult.success(
-        DFSProject(**doc), summary=f"Project '{params.project_id}' created.",
+        DFSProject(id=params.project_id, title=params.brand_name or params.project_id, **doc),
+        summary=f"Project '{params.project_id}' created.",
         refresh_panels=["dfs_projects"],
     )
 
@@ -277,7 +278,7 @@ async def create_project(ctx, params: CreateProjectParams) -> ActionResult:
 async def list_projects(ctx, params: ListProjectsParams) -> ActionResult:
     """List every tracking project, unlimited in number."""
     page = await ctx.store.query("dfs_projects", limit=params.limit)
-    items = [DFSProject(**row.data) for row in page.data]
+    items = [DFSProject(id=row.data["project_id"], title=row.data.get("brand_name") or row.data["project_id"], **row.data) for row in page.data]
     return ActionResult.success(DFSProjectList(items=items), summary=f"{len(items)} project(s).")
 
 
@@ -350,7 +351,7 @@ async def track_keyword(ctx, params: TrackKeywordParams) -> ActionResult:
     }
     created = await ctx.store.create("dfs_tracked_keywords", doc)
     return ActionResult.success(
-        TrackedKeyword(id=created.id, **doc),
+        TrackedKeyword(id=created.id, title=params.keyword, **doc),
         summary=f"Now tracking '{params.keyword}' for {params.project_id}.",
         refresh_panels=["dfs_tracked"],
     )
@@ -367,7 +368,7 @@ async def list_tracked_keywords(ctx, params: ListTrackedKeywordsParams) -> Actio
     """List tracked keywords with their latest known SERP position."""
     where = {"project_id": params.project_id} if params.project_id else None
     page = await ctx.store.query("dfs_tracked_keywords", where=where, limit=params.limit)
-    items = [TrackedKeyword(id=row.id, **row.data) for row in page.data]
+    items = [TrackedKeyword(id=row.id, title=row.data.get("keyword", ""), **row.data) for row in page.data]
     return ActionResult.success(TrackedKeywordList(items=items), summary=f"{len(items)} tracked keyword(s).")
 
 
@@ -623,7 +624,7 @@ async def track_domain(ctx, params: TrackDomainParams) -> ActionResult:
     }
     created = await ctx.store.create("dfs_tracked_domains", doc)
     return ActionResult.success(
-        TrackedDomain(id=created.id, **doc),
+        TrackedDomain(id=created.id, title=params.domain, **doc),
         summary=f"Now tracking backlinks for '{params.domain}'.",
         refresh_panels=["dfs_tracked"],
     )
@@ -639,7 +640,7 @@ async def list_tracked_domains(ctx, params: ListTrackedDomainsParams) -> ActionR
     """List tracked domains with their latest known backlink summary."""
     where = {"project_id": params.project_id} if params.project_id else None
     page = await ctx.store.query("dfs_tracked_domains", where=where, limit=200)
-    items = [TrackedDomain(id=r.id, **r.data) for r in page.data]
+    items = [TrackedDomain(id=r.id, title=r.data.get("domain", ""), **r.data) for r in page.data]
     return ActionResult.success(TrackedDomainList(items=items), summary=f"{len(items)} tracked domain(s).")
 
 
