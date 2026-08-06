@@ -1,0 +1,3111 @@
+{
+  "manifest_schema_version": 3,
+  "sdk_version": "5.9.13",
+  "app_id": "dataforseo-connector",
+  "version": "0.1.0",
+  "name": "DataForSEO Connector",
+  "description": "Keyword rankings, search volume, related keyword research, and backlink data via your own DataForSEO account -- SERP positions with history, Google Ads search volume/CPC, DataForSEO Labs related-keyword ideas, and domain backlink summaries. Organize tracking into projects (your own sites or a competitor's), with a permanent Sandbox/Live toggle so you can try everything free before spending real API credits.",
+  "icon": "icon.svg",
+  "actions_explicit": true,
+  "system": false,
+  "capabilities": [
+    "dataforseo:read",
+    "dataforseo:write"
+  ],
+  "tools": [
+    {
+      "name": "connect_dataforseo",
+      "description": "Connect DataForSEO by saving your API login+password, after checking they actually work. Get them from your DataForSEO dashboard -- the API password is separate from your dashboard login password.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "dataforseo.provider.connected"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "login": {
+            "default": "",
+            "description": "DataForSEO API login (from your DataForSEO dashboard, usually your account email)",
+            "title": "Login",
+            "type": "string"
+          },
+          "password": {
+            "default": "",
+            "description": "DataForSEO API password (from your DataForSEO dashboard -- a separate password from your dashboard login)",
+            "title": "Password",
+            "type": "string"
+          }
+        },
+        "title": "ConnectDataForSEOParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "connected": {
+            "default": false,
+            "title": "Connected",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "title": "ProviderConnection",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "dataforseo-connector.connect_dataforseo",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "disconnect_dataforseo",
+      "description": "Disconnect DataForSEO: deletes the saved login+password. Existing projects, tracked keywords/domains and their history are kept -- only new checks are blocked until you connect again.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "dataforseo.provider.disconnected"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "description": "Explicit empty params model -- V17 disallows untyped handlers.",
+        "properties": {},
+        "title": "NoParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "connected": {
+            "default": false,
+            "title": "Connected",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "title": "ProviderConnection",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "dataforseo-connector.disconnect_dataforseo",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "get_dataforseo_connection",
+      "description": "Check whether DataForSEO is connected (does not reveal the credentials).",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "description": "Explicit empty params model -- V17 disallows untyped handlers.",
+        "properties": {},
+        "title": "NoParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "connected": {
+            "default": false,
+            "title": "Connected",
+            "type": "boolean"
+          },
+          "detail": {
+            "default": "",
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "title": "ProviderConnection",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "set_sandbox_mode",
+      "description": "Switch between DataForSEO's free Sandbox (test data, no charges) and Live (real data, real cost) mode. This is a standing setting -- it stays on Sandbox or Live for every check until changed again.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "dataforseo.sandbox_mode.changed"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "sandbox": {
+            "description": "True = use DataForSEO's free Sandbox (test data, no charges). False = Live (real data, real cost).",
+            "title": "Sandbox",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "sandbox"
+        ],
+        "title": "SetSandboxModeParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "sandbox": {
+            "default": true,
+            "title": "Sandbox",
+            "type": "boolean"
+          }
+        },
+        "title": "SandboxModeStatus",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "dataforseo-connector.set_sandbox_mode",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "get_sandbox_mode",
+      "description": "Check whether DataForSEO Connector is currently in Sandbox or Live mode.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "description": "Explicit empty params model -- V17 disallows untyped handlers.",
+        "properties": {},
+        "title": "NoParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "sandbox": {
+            "default": true,
+            "title": "Sandbox",
+            "type": "boolean"
+          }
+        },
+        "title": "SandboxModeStatus",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "create_project",
+      "description": "Create a new DataForSEO tracking project for a domain -- your own site or a competitor's (set is_own_site=false). Sets the default location/language used for keyword checks in this project unless overridden per keyword. Use list_connected_sites first if you want to add a site you already connected in WordPress Hub with one click instead.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "dataforseo.project.created"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "project_id": {
+            "description": "Unique project identifier, e.g. 'climtec.md'",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "Domain, e.g. 'climtec.md'",
+            "title": "Domain",
+            "type": "string"
+          },
+          "brand_name": {
+            "default": "",
+            "description": "Brand/company name",
+            "title": "Brand Name",
+            "type": "string"
+          },
+          "default_location_name": {
+            "default": "Chisinau,Moldova",
+            "description": "Default DataForSEO location name for SERP/keyword lookups, e.g. 'Chisinau,Moldova' or 'London,England,United Kingdom'",
+            "title": "Default Location Name",
+            "type": "string"
+          },
+          "default_language_code": {
+            "default": "ru",
+            "description": "Default two-letter language code, e.g. 'ru', 'ro', 'en'",
+            "title": "Default Language Code",
+            "type": "string"
+          },
+          "is_own_site": {
+            "default": true,
+            "description": "False if this project tracks a competitor's domain, not your own",
+            "title": "Is Own Site",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "project_id",
+          "domain"
+        ],
+        "title": "CreateProjectParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "description": "One tracked domain/project in DataForSEO Connector.",
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "project_id": {
+            "default": "",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "domain": {
+            "default": "",
+            "title": "Domain",
+            "type": "string"
+          },
+          "brand_name": {
+            "default": "",
+            "title": "Brand Name",
+            "type": "string"
+          },
+          "default_location_name": {
+            "default": "Chisinau,Moldova",
+            "title": "Default Location Name",
+            "type": "string"
+          },
+          "default_language_code": {
+            "default": "ru",
+            "title": "Default Language Code",
+            "type": "string"
+          },
+          "is_own_site": {
+            "default": true,
+            "title": "Is Own Site",
+            "type": "boolean"
+          },
+          "created_at": {
+            "default": "",
+            "title": "Created At",
+            "type": "string"
+          }
+        },
+        "title": "DFSProject",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "dataforseo-connector.create_project",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "list_projects",
+      "description": "List all DataForSEO tracking projects (your own sites and any competitor domains you chose to track).",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "limit": {
+            "default": 50,
+            "description": "Max items to return (1-100)",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "ListProjectsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "DFSProject": {
+            "description": "One tracked domain/project in DataForSEO Connector.",
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "project_id": {
+                "default": "",
+                "title": "Project Id",
+                "type": "string"
+              },
+              "domain": {
+                "default": "",
+                "title": "Domain",
+                "type": "string"
+              },
+              "brand_name": {
+                "default": "",
+                "title": "Brand Name",
+                "type": "string"
+              },
+              "default_location_name": {
+                "default": "Chisinau,Moldova",
+                "title": "Default Location Name",
+                "type": "string"
+              },
+              "default_language_code": {
+                "default": "ru",
+                "title": "Default Language Code",
+                "type": "string"
+              },
+              "is_own_site": {
+                "default": true,
+                "title": "Is Own Site",
+                "type": "boolean"
+              },
+              "created_at": {
+                "default": "",
+                "title": "Created At",
+                "type": "string"
+              }
+            },
+            "title": "DFSProject",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/$defs/DFSProject"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Total"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Page"
+          },
+          "has_more": {
+            "default": false,
+            "title": "Has More",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "DFSProjectList",
+        "type": "object",
+        "x-sdl": "entity-list"
+      },
+      "event": "",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "list_connected_sites",
+      "description": "List sites already connected in other apps (WordPress Hub today) that Quick Add offers as one-click DataForSEO project candidates, flagging which are already registered here.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "limit": {
+            "default": 50,
+            "description": "Max items to return (1-100)",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "ListConnectedSitesParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "ConnectedSite": {
+            "description": "One site read from a site-provider extension -- the raw material\nbehind the Quick Add list.",
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "default": "",
+                "title": "Status",
+                "type": "string"
+              },
+              "url": {
+                "default": "",
+                "title": "Url",
+                "type": "string"
+              },
+              "site_id": {
+                "default": "",
+                "title": "Site Id",
+                "type": "string"
+              },
+              "name": {
+                "default": "",
+                "title": "Name",
+                "type": "string"
+              },
+              "provider": {
+                "default": "",
+                "title": "Provider",
+                "type": "string"
+              },
+              "already_tracked": {
+                "default": false,
+                "title": "Already Tracked",
+                "type": "boolean"
+              }
+            },
+            "title": "ConnectedSite",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/$defs/ConnectedSite"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Total"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Page"
+          },
+          "has_more": {
+            "default": false,
+            "title": "Has More",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ConnectedSiteList",
+        "type": "object",
+        "x-sdl": "entity-list"
+      },
+      "event": "",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "track_keyword",
+      "description": "Start tracking a keyword's Google SERP position for a project. Uses the project's default location/language unless overridden here. Does not check the ranking yet -- call check_serp_ranking after.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "dataforseo.keyword.tracked"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "project_id": {
+            "description": "Project id from list_projects",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "keyword": {
+            "description": "Keyword phrase to track",
+            "title": "Keyword",
+            "type": "string"
+          },
+          "location_name": {
+            "default": "",
+            "description": "Override the project's default location name; empty = use project default",
+            "title": "Location Name",
+            "type": "string"
+          },
+          "language_code": {
+            "default": "",
+            "description": "Override the project's default language code; empty = use project default",
+            "title": "Language Code",
+            "type": "string"
+          },
+          "search_engine": {
+            "default": "google",
+            "description": "Search engine: currently google only",
+            "title": "Search Engine",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "keyword"
+        ],
+        "title": "TrackKeywordParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "description": "One keyword being tracked for SERP position within a project.",
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "project_id": {
+            "default": "",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "keyword": {
+            "default": "",
+            "title": "Keyword",
+            "type": "string"
+          },
+          "location_name": {
+            "default": "",
+            "title": "Location Name",
+            "type": "string"
+          },
+          "language_code": {
+            "default": "",
+            "title": "Language Code",
+            "type": "string"
+          },
+          "search_engine": {
+            "default": "google",
+            "title": "Search Engine",
+            "type": "string"
+          },
+          "latest_position": {
+            "default": 0,
+            "title": "Latest Position",
+            "type": "integer"
+          },
+          "latest_url": {
+            "default": "",
+            "title": "Latest Url",
+            "type": "string"
+          },
+          "latest_checked_at": {
+            "default": "",
+            "title": "Latest Checked At",
+            "type": "string"
+          },
+          "search_volume": {
+            "default": 0,
+            "title": "Search Volume",
+            "type": "integer"
+          },
+          "cpc": {
+            "default": 0.0,
+            "title": "Cpc",
+            "type": "number"
+          },
+          "competition": {
+            "default": 0.0,
+            "title": "Competition",
+            "type": "number"
+          },
+          "created_at": {
+            "default": "",
+            "title": "Created At",
+            "type": "string"
+          }
+        },
+        "title": "TrackedKeyword",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "dataforseo-connector.track_keyword",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "list_tracked_keywords",
+      "description": "List tracked keywords, optionally filtered by project, with each keyword's latest known SERP position.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "project_id": {
+            "default": "",
+            "description": "Filter by project. Empty = all projects.",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "limit": {
+            "default": 100,
+            "description": "Max items to return (1-200)",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "ListTrackedKeywordsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "TrackedKeyword": {
+            "description": "One keyword being tracked for SERP position within a project.",
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "project_id": {
+                "default": "",
+                "title": "Project Id",
+                "type": "string"
+              },
+              "keyword": {
+                "default": "",
+                "title": "Keyword",
+                "type": "string"
+              },
+              "location_name": {
+                "default": "",
+                "title": "Location Name",
+                "type": "string"
+              },
+              "language_code": {
+                "default": "",
+                "title": "Language Code",
+                "type": "string"
+              },
+              "search_engine": {
+                "default": "google",
+                "title": "Search Engine",
+                "type": "string"
+              },
+              "latest_position": {
+                "default": 0,
+                "title": "Latest Position",
+                "type": "integer"
+              },
+              "latest_url": {
+                "default": "",
+                "title": "Latest Url",
+                "type": "string"
+              },
+              "latest_checked_at": {
+                "default": "",
+                "title": "Latest Checked At",
+                "type": "string"
+              },
+              "search_volume": {
+                "default": 0,
+                "title": "Search Volume",
+                "type": "integer"
+              },
+              "cpc": {
+                "default": 0.0,
+                "title": "Cpc",
+                "type": "number"
+              },
+              "competition": {
+                "default": 0.0,
+                "title": "Competition",
+                "type": "number"
+              },
+              "created_at": {
+                "default": "",
+                "title": "Created At",
+                "type": "string"
+              }
+            },
+            "title": "TrackedKeyword",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/$defs/TrackedKeyword"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Total"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Page"
+          },
+          "has_more": {
+            "default": false,
+            "title": "Has More",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "TrackedKeywordList",
+        "type": "object",
+        "x-sdl": "entity-list"
+      },
+      "event": "",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "untrack_keyword",
+      "description": "Stop tracking a keyword. Its recorded history snapshots are kept.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "dataforseo.keyword.untracked"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "keyword_id": {
+            "description": "Tracked keyword id from list_tracked_keywords",
+            "title": "Keyword Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "keyword_id"
+        ],
+        "title": "UntrackKeywordParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "description": "Result of untrack_keyword/untrack_domain -- confirms the id removed\nfrom active tracking; history snapshots are kept.",
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "removed": {
+            "default": true,
+            "title": "Removed",
+            "type": "boolean"
+          }
+        },
+        "title": "UntrackResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "dataforseo-connector.untrack_keyword",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "check_serp_ranking",
+      "description": "Run a fresh Google SERP check for a tracked keyword: finds the project's own domain among the results and records a new history snapshot, plus shows the top competing results.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "dataforseo.keyword.checked"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "keyword_id": {
+            "description": "Tracked keyword id from list_tracked_keywords -- runs a fresh SERP check and records a new history snapshot",
+            "title": "Keyword Id",
+            "type": "string"
+          },
+          "depth": {
+            "default": 20,
+            "description": "How many top organic results to scan for the project's domain (1-100)",
+            "title": "Depth",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "keyword_id"
+        ],
+        "title": "CheckSerpRankingParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "SerpCompetitorItem": {
+            "description": "One competing organic result shown alongside our own ranking.",
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "default": "",
+                "title": "Url",
+                "type": "string"
+              },
+              "position": {
+                "default": 0,
+                "title": "Position",
+                "type": "integer"
+              },
+              "domain": {
+                "default": "",
+                "title": "Domain",
+                "type": "string"
+              }
+            },
+            "title": "SerpCompetitorItem",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "description": "Result of a fresh SERP check for one tracked keyword.",
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "default": "",
+            "title": "Url",
+            "type": "string"
+          },
+          "keyword_id": {
+            "default": "",
+            "title": "Keyword Id",
+            "type": "string"
+          },
+          "keyword": {
+            "default": "",
+            "title": "Keyword",
+            "type": "string"
+          },
+          "project_domain": {
+            "default": "",
+            "title": "Project Domain",
+            "type": "string"
+          },
+          "found": {
+            "default": false,
+            "title": "Found",
+            "type": "boolean"
+          },
+          "position": {
+            "default": 0,
+            "title": "Position",
+            "type": "integer"
+          },
+          "top_competitors": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/SerpCompetitorItem"
+            },
+            "title": "Top Competitors",
+            "type": "array"
+          },
+          "checked_at": {
+            "default": "",
+            "title": "Checked At",
+            "type": "string"
+          }
+        },
+        "title": "SerpCheckResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "dataforseo-connector.check_serp_ranking",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "get_keyword_history",
+      "description": "Read the position history for a tracked keyword -- every past SERP check, most recent first.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "keyword_id": {
+            "description": "Tracked keyword id from list_tracked_keywords",
+            "title": "Keyword Id",
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "description": "Max snapshots to return, most recent first (1-200)",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "keyword_id"
+        ],
+        "title": "GetKeywordHistoryParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "KeywordSnapshot": {
+            "description": "One historical SERP-position reading for a tracked keyword.",
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "default": "",
+                "title": "Url",
+                "type": "string"
+              },
+              "keyword_id": {
+                "default": "",
+                "title": "Keyword Id",
+                "type": "string"
+              },
+              "project_id": {
+                "default": "",
+                "title": "Project Id",
+                "type": "string"
+              },
+              "keyword": {
+                "default": "",
+                "title": "Keyword",
+                "type": "string"
+              },
+              "position": {
+                "default": 0,
+                "title": "Position",
+                "type": "integer"
+              },
+              "checked_at": {
+                "default": "",
+                "title": "Checked At",
+                "type": "string"
+              }
+            },
+            "title": "KeywordSnapshot",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/$defs/KeywordSnapshot"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Total"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Page"
+          },
+          "has_more": {
+            "default": false,
+            "title": "Has More",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "KeywordSnapshotList",
+        "type": "object",
+        "x-sdl": "entity-list"
+      },
+      "event": "",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "get_keyword_volume",
+      "description": "Look up monthly Google Ads search volume, CPC, and competition for up to 1000 keywords at once. Optionally pass a project_id to use its default location/language.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "project_id": {
+            "default": "",
+            "description": "Optional project id -- supplies default location/language when set",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "keywords": {
+            "description": "Up to 1000 keyword phrases to look up search volume/CPC/competition for",
+            "items": {
+              "type": "string"
+            },
+            "title": "Keywords",
+            "type": "array"
+          },
+          "location_name": {
+            "default": "",
+            "description": "Override location name; empty = use project default or 'Chisinau,Moldova'",
+            "title": "Location Name",
+            "type": "string"
+          },
+          "language_code": {
+            "default": "",
+            "description": "Override two-letter language code; empty = use project default or 'ru'",
+            "title": "Language Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "keywords"
+        ],
+        "title": "GetKeywordVolumeParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "KeywordVolumeItem": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "keyword": {
+                "default": "",
+                "title": "Keyword",
+                "type": "string"
+              },
+              "search_volume": {
+                "default": 0,
+                "title": "Search Volume",
+                "type": "integer"
+              },
+              "cpc": {
+                "default": 0.0,
+                "title": "Cpc",
+                "type": "number"
+              },
+              "competition": {
+                "default": 0.0,
+                "title": "Competition",
+                "type": "number"
+              },
+              "competition_level": {
+                "default": "",
+                "title": "Competition Level",
+                "type": "string"
+              }
+            },
+            "title": "KeywordVolumeItem",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/$defs/KeywordVolumeItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Total"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Page"
+          },
+          "has_more": {
+            "default": false,
+            "title": "Has More",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "KeywordVolumeList",
+        "type": "object",
+        "x-sdl": "entity-list"
+      },
+      "event": "",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "find_related_keywords",
+      "description": "Discover related keyword ideas for a seed keyword -- the 'searches related to' SERP graph, with search volume and CPC per idea. Great for finding new keywords worth tracking.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "project_id": {
+            "default": "",
+            "description": "Optional project id -- supplies default location/language when set",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "seed_keyword": {
+            "description": "Seed keyword to expand from",
+            "title": "Seed Keyword",
+            "type": "string"
+          },
+          "location_name": {
+            "default": "",
+            "description": "Override location name; empty = use project default or 'Chisinau,Moldova'",
+            "title": "Location Name",
+            "type": "string"
+          },
+          "language_code": {
+            "default": "",
+            "description": "Override two-letter language code; empty = use project default or 'ru'",
+            "title": "Language Code",
+            "type": "string"
+          },
+          "depth": {
+            "default": 2,
+            "description": "Search-graph depth to explore (1-4) -- higher finds more but costs more",
+            "title": "Depth",
+            "type": "integer"
+          },
+          "limit": {
+            "default": 20,
+            "description": "Max related keywords to return (1-100)",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "seed_keyword"
+        ],
+        "title": "FindRelatedKeywordsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "RelatedKeywordItem": {
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "keyword": {
+                "default": "",
+                "title": "Keyword",
+                "type": "string"
+              },
+              "search_volume": {
+                "default": 0,
+                "title": "Search Volume",
+                "type": "integer"
+              },
+              "cpc": {
+                "default": 0.0,
+                "title": "Cpc",
+                "type": "number"
+              },
+              "competition": {
+                "default": 0.0,
+                "title": "Competition",
+                "type": "number"
+              }
+            },
+            "title": "RelatedKeywordItem",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/$defs/RelatedKeywordItem"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Total"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Page"
+          },
+          "has_more": {
+            "default": false,
+            "title": "Has More",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "RelatedKeywordList",
+        "type": "object",
+        "x-sdl": "entity-list"
+      },
+      "event": "",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "track_domain",
+      "description": "Start tracking a domain's backlink profile for a project (your own site or a competitor's). Does not fetch data yet -- call get_backlink_profile after.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "dataforseo.domain.tracked"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "project_id": {
+            "description": "Project id from list_projects",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "domain": {
+            "description": "Domain to monitor for backlinks, e.g. 'climtec.md' or a competitor's domain",
+            "title": "Domain",
+            "type": "string"
+          }
+        },
+        "required": [
+          "project_id",
+          "domain"
+        ],
+        "title": "TrackDomainParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "description": "One domain being monitored for backlink profile within a project.\nUsually the project's own domain, but can also be a competitor's.",
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "project_id": {
+            "default": "",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "domain": {
+            "default": "",
+            "title": "Domain",
+            "type": "string"
+          },
+          "latest_backlinks": {
+            "default": 0,
+            "title": "Latest Backlinks",
+            "type": "integer"
+          },
+          "latest_referring_domains": {
+            "default": 0,
+            "title": "Latest Referring Domains",
+            "type": "integer"
+          },
+          "latest_rank": {
+            "default": 0,
+            "title": "Latest Rank",
+            "type": "integer"
+          },
+          "latest_checked_at": {
+            "default": "",
+            "title": "Latest Checked At",
+            "type": "string"
+          },
+          "created_at": {
+            "default": "",
+            "title": "Created At",
+            "type": "string"
+          }
+        },
+        "title": "TrackedDomain",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "dataforseo-connector.track_domain",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "list_tracked_domains",
+      "description": "List tracked domains, optionally filtered by project.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "project_id": {
+            "default": "",
+            "description": "Filter by project. Empty = all projects.",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "limit": {
+            "default": 100,
+            "description": "Max items to return (1-200)",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "ListTrackedDomainsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "TrackedDomain": {
+            "description": "One domain being monitored for backlink profile within a project.\nUsually the project's own domain, but can also be a competitor's.",
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "project_id": {
+                "default": "",
+                "title": "Project Id",
+                "type": "string"
+              },
+              "domain": {
+                "default": "",
+                "title": "Domain",
+                "type": "string"
+              },
+              "latest_backlinks": {
+                "default": 0,
+                "title": "Latest Backlinks",
+                "type": "integer"
+              },
+              "latest_referring_domains": {
+                "default": 0,
+                "title": "Latest Referring Domains",
+                "type": "integer"
+              },
+              "latest_rank": {
+                "default": 0,
+                "title": "Latest Rank",
+                "type": "integer"
+              },
+              "latest_checked_at": {
+                "default": "",
+                "title": "Latest Checked At",
+                "type": "string"
+              },
+              "created_at": {
+                "default": "",
+                "title": "Created At",
+                "type": "string"
+              }
+            },
+            "title": "TrackedDomain",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/$defs/TrackedDomain"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Total"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Page"
+          },
+          "has_more": {
+            "default": false,
+            "title": "Has More",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "TrackedDomainList",
+        "type": "object",
+        "x-sdl": "entity-list"
+      },
+      "event": "",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "untrack_domain",
+      "description": "Stop tracking a domain. Its recorded history snapshots are kept.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "dataforseo.domain.untracked"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "domain_id": {
+            "description": "Tracked domain id from list_tracked_domains",
+            "title": "Domain Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain_id"
+        ],
+        "title": "UntrackDomainParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "description": "Result of untrack_keyword/untrack_domain -- confirms the id removed\nfrom active tracking; history snapshots are kept.",
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "removed": {
+            "default": true,
+            "title": "Removed",
+            "type": "boolean"
+          }
+        },
+        "title": "UntrackResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "dataforseo-connector.untrack_domain",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "get_backlink_profile",
+      "description": "Run a fresh backlink summary check for a tracked domain: total backlinks, referring domains, and DataForSEO's domain rank, and records a new history snapshot.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "dataforseo.domain.checked"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "domain_id": {
+            "description": "Tracked domain id from list_tracked_domains -- runs a fresh backlink check and records a new history snapshot",
+            "title": "Domain Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain_id"
+        ],
+        "title": "GetBacklinkProfileParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "description": "One historical backlink-profile reading for a tracked domain.",
+        "properties": {
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "domain_id": {
+            "default": "",
+            "title": "Domain Id",
+            "type": "string"
+          },
+          "project_id": {
+            "default": "",
+            "title": "Project Id",
+            "type": "string"
+          },
+          "domain": {
+            "default": "",
+            "title": "Domain",
+            "type": "string"
+          },
+          "backlinks": {
+            "default": 0,
+            "title": "Backlinks",
+            "type": "integer"
+          },
+          "referring_domains": {
+            "default": 0,
+            "title": "Referring Domains",
+            "type": "integer"
+          },
+          "rank": {
+            "default": 0,
+            "title": "Rank",
+            "type": "integer"
+          },
+          "checked_at": {
+            "default": "",
+            "title": "Checked At",
+            "type": "string"
+          }
+        },
+        "title": "BacklinkSnapshot",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "dataforseo-connector.get_backlink_profile",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    },
+    {
+      "name": "get_domain_history",
+      "description": "Read the backlink history for a tracked domain -- every past check, most recent first.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "domain_id": {
+            "description": "Tracked domain id from list_tracked_domains",
+            "title": "Domain Id",
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "description": "Max snapshots to return, most recent first (1-200)",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "domain_id"
+        ],
+        "title": "GetDomainHistoryParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "BacklinkSnapshot": {
+            "description": "One historical backlink-profile reading for a tracked domain.",
+            "properties": {
+              "id": {
+                "default": "",
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "default": "",
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "domain_id": {
+                "default": "",
+                "title": "Domain Id",
+                "type": "string"
+              },
+              "project_id": {
+                "default": "",
+                "title": "Project Id",
+                "type": "string"
+              },
+              "domain": {
+                "default": "",
+                "title": "Domain",
+                "type": "string"
+              },
+              "backlinks": {
+                "default": 0,
+                "title": "Backlinks",
+                "type": "integer"
+              },
+              "referring_domains": {
+                "default": 0,
+                "title": "Referring Domains",
+                "type": "integer"
+              },
+              "rank": {
+                "default": 0,
+                "title": "Rank",
+                "type": "integer"
+              },
+              "checked_at": {
+                "default": "",
+                "title": "Checked At",
+                "type": "string"
+              }
+            },
+            "title": "BacklinkSnapshot",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/$defs/BacklinkSnapshot"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Total"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Page"
+          },
+          "has_more": {
+            "default": false,
+            "title": "Has More",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "BacklinkSnapshotList",
+        "type": "object",
+        "x-sdl": "entity-list"
+      },
+      "event": "",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "dataforseo-connector"
+    }
+  ],
+  "signals": [],
+  "schedules": [],
+  "required_scopes": [],
+  "icon_size_bytes": 267,
+  "lifecycle": {
+    "health_check": {
+      "interval_sec": 60
+    }
+  },
+  "secrets": [
+    {
+      "name": "dataforseo_login",
+      "description": "DataForSEO API login (usually your account email) -- from your DataForSEO dashboard, NOT your dashboard login password.",
+      "required": false,
+      "write_mode": "both",
+      "max_bytes": 4096,
+      "scope": "user"
+    },
+    {
+      "name": "dataforseo_password",
+      "description": "DataForSEO API password -- a separate password from your dashboard login, shown once when the API password is generated/reset in your DataForSEO dashboard.",
+      "required": false,
+      "write_mode": "both",
+      "max_bytes": 4096,
+      "scope": "user"
+    }
+  ],
+  "panels": [
+    {
+      "panel_id": "secrets",
+      "slot": "right",
+      "title": "Secrets",
+      "tree": {},
+      "icon": "KeyRound",
+      "refresh": "manual",
+      "center_overlay": false
+    },
+    {
+      "panel_id": "dfs_projects",
+      "slot": "right",
+      "title": "DataForSEO Projects",
+      "tree": {},
+      "icon": "🔍",
+      "refresh": "manual",
+      "center_overlay": false,
+      "default_width": 300,
+      "min_width": 240,
+      "max_width": 420
+    },
+    {
+      "panel_id": "dfs_tracked",
+      "slot": "left",
+      "title": "Tracked",
+      "tree": {},
+      "icon": "📈",
+      "refresh": "manual",
+      "center_overlay": false
+    },
+    {
+      "panel_id": "dfs_detail",
+      "slot": "center",
+      "title": "Detail",
+      "tree": {},
+      "icon": "🔎",
+      "refresh": "manual",
+      "center_overlay": true
+    }
+  ]
+}
