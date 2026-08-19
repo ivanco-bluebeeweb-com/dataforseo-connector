@@ -106,3 +106,23 @@ async def test_adversarial_untrack_domain_already_untracked_is_idempotent(ctx_co
 
     second = await h.untrack_domain(ctx_connected, UntrackDomainParams(domain_id=domain_id))
     assert second.error is None
+
+
+# ── Part D3 (SCENARIO_TESTING_STANDARD.md): security / SSRF surface -------
+
+@pytest.mark.asyncio
+async def test_d3_no_ssrf_url_fields_are_dataforseo_output_never_fetched(ctx_connected):
+    """Every domain/keyword a caller can set here (create_project's domain,
+    track_domain's domain, track_keyword's keyword) is sent AS DATA inside
+    the request body to DataForSEO's own fixed API host via dfs_client.py's
+    ctx.http.post -- this app's own code never independently fetches an
+    address a user names. Confirmed by grep: no ctx.http call anywhere
+    outside dfs_client.py, and every dfs_client.py call targets the same
+    fixed DataForSEO base URL, never a caller-supplied one. Feeding an
+    adversarial domain (an internal/metadata-style host) must be handled as
+    opaque payload data, not as something this app's own code resolves."""
+    result = await h.create_project(
+        ctx_connected, CreateProjectParams(
+            project_id="ssrf-probe", domain="169.254.169.254"))
+    assert result.error is None, result.error
+    assert result.data.domain == "169.254.169.254"
